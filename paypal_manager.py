@@ -5,6 +5,15 @@ import sys
 
 
 
+# Default configuration values
+CONFIG_MODE = 0
+CONFIG_RETURN_URL = "http://localhost:8100/#/page_home"
+CONFIG_CANCEL_URL = "http://localhost:8100/#/page_home"
+CONFIG_PAYMENT_ID = "PAYID-LWPNLEY6MH86403AS8631242"
+CONFIG_PAYER_ID   = "KZ93QYTD9WRAY"
+
+
+
 def create_payment(paypal, return_url, cancel_url, item_price, item_currency, item_quantity, item_name, item_description):
 
 	payment_object = paypal.create_payment(
@@ -57,23 +66,25 @@ def get_payment_history(paypal):
 	print(len(payment_history.payments));
 	print(payment_history.payments);
 
-
-
 def parse_arguments(argv):
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--USE_MODE',       required=True,  default=0, help='0 for create payment, 1 for execute payment, 2 for check payment history')
-	parser.add_argument('--USE_PAYMENT_ID', required=False, default="PAYID-LWPNLEY6MH86403AS8631242", help='payment id to use')
-	parser.add_argument('--USE_PAYER_ID',   required=False, default="KZ93QYTD9WRAY", help='payer id to use')
+	parser.add_argument('--USE_RETURN_URL', required=False, default="None", help='return url to use')
+	parser.add_argument('--USE_CANCEL_URL', required=False, default="None", help='cancel url id to use')
+	parser.add_argument('--USE_PAYMENT_ID', required=False, default="None", help='payment id to use')
+	parser.add_argument('--USE_PAYER_ID',   required=False, default="None", help='payer id to use')
 	return parser.parse_args(argv)
 
 
 if __name__ == '__main__':
 
 	args = parse_arguments(sys.argv[1:])
-	CONFIG_MODE = int(args.USE_MODE)
+	CONFIG_MODE       = int(args.USE_MODE)
+	CONFIG_RETURN_URL = args.USE_RETURN_URL
+	CONFIG_CANCEL_URL = args.USE_CANCEL_URL
 	CONFIG_PAYMENT_ID = args.USE_PAYMENT_ID
-	CONFIG_PAYER_ID = args.USE_PAYER_ID
+	CONFIG_PAYER_ID   = args.USE_PAYER_ID
 
 	# Initialize Paypal library
 	paypal = paypal_client()
@@ -81,8 +92,8 @@ if __name__ == '__main__':
 
 	# Initialize payment then open link to paypal
 	if CONFIG_MODE == 1:
-		return_url = "http://localhost:8100/#/page_home"
-		cancel_url = "http://localhost:8100/#/page_home"
+		return_url = CONFIG_RETURN_URL
+		cancel_url = CONFIG_CANCEL_URL
 		item_price = "7.00"
 		item_currency = "USD"
 		item_quantity = 1
