@@ -1,0 +1,5 @@
+pip install -r requirements.txt
+
+On debian:
+sudo apt-get install libssl-dev libffi-dev
+
