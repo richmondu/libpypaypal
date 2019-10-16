@@ -36,7 +36,6 @@ C. Moving from Sandbox to Live:
 
 1. Paypal Python SDK v2 https://github.com/paypal/Checkout-Python-SDK
 2. Paypal Python SDK v1 https://github.com/paypal/PayPal-Python-SDK
-3. Paypal Server integration https://developer.paypal.com/docs/checkout/reference/server-integration/#use-cases
-4. Paypal Developer website https://developer.paypal.com/
-5. Paypal Sandbox website https://sandbox.paypal.com/
+3. Paypal Developer website https://developer.paypal.com/
+4. Paypal Sandbox website https://sandbox.paypal.com/
 
