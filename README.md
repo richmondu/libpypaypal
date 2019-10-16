@@ -6,7 +6,7 @@ libpypaypal demonstrates usage of Paypal's Python SDK for processing payments
 Integrating Paypal payment gateway is easier than we thought. Paypal provides a Python SDK together with Sandbox accounts to make it easy for developers to integrate and test. 
 
 
-Instructions:
+### Instructions:
 
 A. Setup Paypal Sandbox accounts
 1. Login to developer.paypal.com
@@ -30,7 +30,7 @@ C. Moving from Sandbox to Live:
 2. Similar as above but replace Sandbox to Live
 
 
-Resources:
+### Resources:
 
 1. Paypal Python SDK v2 https://github.com/paypal/Checkout-Python-SDK
 2. Paypal Python SDK v1 https://github.com/paypal/PayPal-Python-SDK
