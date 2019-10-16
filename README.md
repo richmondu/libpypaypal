@@ -9,7 +9,7 @@ Integrating Paypal payment gateway is easier than we thought. Paypal provides a 
 ### Instructions:
 
 A. Setup Paypal Sandbox accounts
-1. Login to developer.paypal.com
+1. Login to https://developer.paypal.com
 2. Create a Sandbox Business account (for seller) and a Sandbox Personal account (for test buyer).
 3. Create a Sandbox App linked to a Sandbox business account.
    Copy the credentials: Client ID and Secret, to be used in the Paypal Python SDK. 
@@ -21,7 +21,7 @@ B. Code flow
    Once customer cancels or approves the payment, the Return URL or Cancel URL will be called.
    If successful, the Return URL is called with the information of PayerID and PaymentID.
 3. Execute payment with the specified PayerID and PaymentID.
-4. Login to http://sandbox.paypal.com/
+4. Login to https://sandbox.paypal.com/
    Check Sandbox Business account (for seller) to confirm the transaction and amount is credited.
    Check Sandbox Personal account (for test buyer) to confirm the transaction and amount is debited.
 
