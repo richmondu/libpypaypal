@@ -3,19 +3,37 @@
 libpypaypal demonstrates usage of Paypal's Python SDK for processing payments
 
 
+Integrating Paypal payment gateway is easier than we thought. Paypal provides a Python SDK together with Sandbox accounts to make it easy for developers to integrate and test. 
+
+
 Instructions:
 
-1. Install the required libraries: pip install -r requirements.txt
-2. Login on https://developer.paypal.com/ and get Client ID and Secret for Default Application 
-3. Set the environment variables: PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET
-4. Run webserver and update PAYPAL_TEST_1_MODIFYME.bat.
-5. Login to payer account.
-6. Update and run PAYPAL_TEST_2_MODIFYME.bat
-7. Run PAYPAL_TEST_3.bat
+A. Setup Paypal Sandbox accounts
+1. Login to developer.paypal.com
+2. Create a Sandbox Business account (for seller) and a Sandbox Personal account (for test buyer).
+3. Create a Sandbox App linked to a Sandbox business account.
+   Copy the credentials: Client ID and Secret, to be used in the Paypal Python SDK. 
+
+B. Code flow
+1. Initialize Paypal library by providing the App account credentials: Client ID and Secret.
+2. Setup payment information to Paypal including a Return URL and Cancel URL callbacks.
+   A URL link will be returned pointing to Paypal page that buyer must approve transaction.
+   Once customer cancels or approves the payment, the Return URL or Cancel URL will be called.
+   If successful, the Return URL is called with the information of PayerID and PaymentID.
+3. Execute payment with the specified PayerID and PaymentID.
+4. Login to http://sandbox.paypal.com/
+   Check Sandbox Business account (for seller) to confirm the transaction and amount is credited.
+   Check Sandbox Personal account (for test buyer) to confirm the transaction and amount is debited.
+
+C. Moving from Sandbox to Live:
+1. Developer account needs to be upgraded from personal account to business account.
+2. Similar as above but replace Sandbox to Live
 
 
 Resources:
 
-1. Paypal Python SDK https://github.com/paypal/PayPal-Python-SDK
-2. Paypal website https://developer.paypal.com/
+1. Paypal Python SDK v2 https://github.com/paypal/Checkout-Python-SDK
+2. Paypal Python SDK v1 https://github.com/paypal/PayPal-Python-SDK
+3. Paypal website https://developer.paypal.com/
+4. Paypal website https://sanbox.paypal.com/
 
