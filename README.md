@@ -5,6 +5,8 @@ libpypaypal demonstrates usage of Paypal's Python SDK for processing payments
 
 Integrating Paypal payment gateway is easier than we thought. Paypal provides a Python SDK together with Sandbox accounts to make it easy for developers to integrate and test. 
 
+I tried Stripe but Stripe requires activating account by putting in business name, bank information, SG NRIC/FIN, etc to get an API key. The API key is needed to call the APIs. So I can't experiment with the APIs because I don't have an API key. Paypal is a lot more developer friendly.
+
 
 ### Instructions:
 
