@@ -14,24 +14,6 @@ CONFIG_PAYER_ID   = "KZ93QYTD9WRAY"
 
 
 
-def create_payment(paypal, return_url, cancel_url, item_price, item_currency, item_quantity, item_name, item_sku, item_description):
-
-	payment_object = paypal.create_payment(
-		return_url, cancel_url, 
-		item_price, item_currency, item_quantity, 
-		item_name, item_sku, item_description)
-
-	(status, payment) = paypal.send_payment(payment_object)
-	if status:
-		approval_url = paypal.get_payment_link(payment)
-		print("Payment creation successful!")
-		print(approval_url)
-		return approval_url
-
-	print("Payment creation failed! {}".format(payment.error))
-	return None
-
-
 def parse_arguments(argv):
 
 	parser = argparse.ArgumentParser()
@@ -63,10 +45,29 @@ def main(args):
 		item_currency = "USD"
 		item_quantity = 1
 		item_name = "Premium Membership"
-		item_sku = "CREDIT5"
+		item_sku = "CREDITX7USD"
 		item_description = "Monthly subscription for premium access"
-		approval_url = create_payment(paypal, return_url, cancel_url, item_price, item_currency, item_quantity, item_name, item_sku, item_description)
+
+		payment_object = paypal.create_payment(return_url, cancel_url, item_price, item_currency, item_quantity, item_name, item_sku, item_description)
+		#print(payment_object)
+		(status, payment) = paypal.send_payment(payment_object)
+		if not status:
+			print("Payment creation failed! {}".format(payment.error))
+			return
+		approval_url = paypal.get_payment_link(payment)
+		print("\r\nPayment creation successful!\r\n")
+
+		data = {
+			"paymentId": payment["id"],
+			"token": approval_url[approval_url.find("token=")+len("token="):],
+			"create_time": payment["create_time"],
+			"sku": item_sku,
+		}
+		print(data)
+
+		# Open browser
 		webbrowser.open_new_tab(approval_url)
+		print("\r\nOpening browser for payment approval!\r\n{}".format(approval_url))
 
 
 	# Once user completes payment, the registered callback URL is called with the Payment ID and Payer ID
