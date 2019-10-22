@@ -16,7 +16,7 @@ class paypal_client:
 	def initialize(self):
 		paypalrestsdk.configure(self.configuration)	
 
-	def create_payment(self, return_url, cancel_url, item_price, item_currency, item_quantity, item_name, item_description):
+	def create_payment(self, return_url, cancel_url, item_price, item_currency, item_quantity, item_name, item_sku, item_description):
 		payment_object = {
 			"intent": "sale",
 			"payer": 
@@ -35,7 +35,7 @@ class paypal_client:
 					"items": [
 					{
 						"name": item_name,
-						"sku": "item",
+						"sku": item_sku,
 						"price": item_price,
 						"currency": item_currency,
 						"quantity": item_quantity
