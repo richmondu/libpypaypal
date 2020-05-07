@@ -1,5 +1,7 @@
 import paypalrestsdk
+from paypalrestsdk import BillingPlan, BillingAgreement
 from paypal_config import config as paypal_config
+from datetime import datetime, timedelta
 
 
 
@@ -50,7 +52,7 @@ class paypal_client:
 			]
 		}
 		return payment_object
-		
+
 	def send_payment(self, payment_object):
 		payment = paypalrestsdk.Payment(payment_object)
 		if payment.create():
@@ -102,4 +104,100 @@ class paypal_client:
 	def get_payment_history(self):
 		payment_history = paypalrestsdk.Payment.all()
 		return payment_history
+
+
+
+	def create_billing_plan(self, return_url, cancel_url, item_price, num_cycles):
+		plan = {
+			"description": "Basic Plan subscription",
+			"merchant_preferences": {
+				"auto_bill_amount": "yes",
+				"cancel_url": cancel_url,
+				"initial_fail_amount_action": "continue",
+				"max_fail_attempts": "2",
+				"return_url": return_url,
+			},
+			"name": "Basic Plan subscription",
+			"payment_definitions": [
+				{
+					"amount": {
+						"currency": "USD",
+						"value": str(item_price)
+					},
+					"cycles": str(num_cycles),
+					"frequency": "DAY",
+					"frequency_interval": "1",
+					"name": "REGULAR 1",
+					"type": "REGULAR"
+				}
+			],
+			"type": "FIXED"
+		}
+		billing_plan = BillingPlan(plan)
+		if billing_plan.create():
+			#print("Billing Plan {} creation successful!".format(billing_plan.id))
+			if billing_plan.activate():
+				#print("Billing Plan {} activation successful {}".format(billing_plan.id, billing_plan.state))
+				pass
+			else:
+				print("Billing Plan activation failed! {}".format(billing_plan.error))
+		else:
+			print("Billing Plan creation failed!".format(billing_plan.error))
+		return billing_plan.id
+
+	def find_billing_plan(self, billing_plan_id):
+		billing_plan = BillingPlan.find(billing_plan_id)
+		return billing_plan
+
+	def get_all_billing_plans(self):
+		history = BillingPlan.all({"status": "ACTIVE", "sort_order": "DESC"})
+		#if history:
+		#	for plan in history.plans:
+		#		print("{}".format(plan.id))
+		return history
+
+
+
+	def create_billing_agreement(self, billing_plan_id):
+		agreement = {
+			"name": "Agreement for Basic Plan subscription",
+			"description": "Agreement for Basic Plan subscription",
+			"start_date": datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
+			"plan": {
+				"id": billing_plan_id
+			},
+			"payer": {
+				"payment_method": "paypal"
+			},
+		}
+		billing_agreement = BillingAgreement(agreement)
+		if billing_agreement.create():
+			print("Billing Agreement creation successful! {}".format(billing_agreement.id))
+			print(billing_agreement)
+			for link in billing_agreement.links:
+				print(link.rel)
+				print(link.href)
+				if link.rel == "approval_url":
+					approval_url = link.href
+					print(approval_url)
+		else:
+			print("Billing Agreement creation failed! {}".format(billing_agreement.error))
+		return billing_agreement
+
+	def get_billing_agreement_link(self, billing_agreement):
+		for link in billing_agreement.links:
+			if link.rel == "approval_url":
+				return link.href
+		return None
+
+	def execute_billing_agreement(self, payment_token):
+		billing_agreement_response = BillingAgreement.execute(payment_token)
+		print(billing_agreement_response)
+		print(billing_agreement_response.id)
+		return billing_agreement_response
+
+	def get_billing_agreement_details(self, agreement_id):
+		billing_agreement = BillingAgreement.find(agreement_id)
+		return billing_agreement
+
 
