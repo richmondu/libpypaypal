@@ -196,8 +196,64 @@ class paypal_client:
 		print(billing_agreement_response.id)
 		return billing_agreement_response
 
-	def get_billing_agreement_details(self, agreement_id):
+	def get_billing_agreement(self, agreement_id):
 		billing_agreement = BillingAgreement.find(agreement_id)
 		return billing_agreement
 
+	def cancel_billing_agreement(self, billing_agreement):
+		note = {"note": "Canceling the agreement"}
+		if billing_agreement.cancel(note):
+			# Would expect status has changed to Cancelled
+			billing_agreement = BillingAgreement.find(billing_agreement.id)
+			print("Billing Agreement cancellation successful! {} {}".format(billing_agreement.id, billing_agreement.state))
+		else:
+			print("Billing Agreement cancellation failed! {}".format(billing_agreement.error))
 
+	def suspend_billing_agreement(self, billing_agreement):
+		note = {"note": "Suspending the agreement"}
+		if billing_agreement.suspend(note):
+			# Would expect status has changed to Suspended
+			billing_agreement = BillingAgreement.find(billing_agreement.id)
+			print("Billing Agreement suspension successful! {} {}".format(billing_agreement.id, billing_agreement.state))
+		else:
+			print("Billing Agreement suspension failed! {}".format(billing_agreement.error))
+
+	def reactivate_billing_agreement(self, billing_agreement):
+		note = {"note": "Reactivating the agreement"}
+		if billing_agreement.reactivate(note):
+			# Would expect status has changed to Active
+			billing_agreement = BillingAgreement.find(billing_agreement.id)
+			print("Billing Agreement reactivation successful! {} {}".format(billing_agreement.id, billing_agreement.state))
+		else:
+			print("Billing Agreement reactivation failed! {}".format(billing_agreement.error))
+
+	def set_and_bill_balance_billing_agreement(self, billing_agreement):
+		outstanding_amount = {
+			"value": "10",
+			"currency": "USD"
+		}
+		if billing_agreement.set_balance(outstanding_amount):
+			billing_agreement = BillingAgreement.find(billing_agreement.id)
+			print("Billing Agreement set_balance successful! {} {}".format(billing_agreement.id, billing_agreement.outstanding_balance.value))
+
+			outstanding_amount_note = {
+				"note": "Billing Balance Amount",
+				"amount": outstanding_amount
+			}
+
+			if billing_agreement.bill_balance(outstanding_amount_note):
+				billing_agreement = BillingAgreement.find(billing_agreement.id)
+				print("Billing Agreement bill_balance successful! {}".format(billing_agreement.outstanding_balance.value))
+			else:
+				print("Billing Agreement bill_balance failed! {}".format(billing_agreement.error))
+		else:
+			print("Billing Agreement set_balance failed! {}".format(billing_agreement.error))
+
+	def search_transaction_billing_agreement(self, billing_agreement, start_date, end_date):
+		#start_date = "2014-07-01"
+		#end_date = "2014-07-20"
+		transactions = billing_agreement.search_transactions(start_date, end_date)
+		for transaction in transactions.agreement_transaction_list:
+			print("  -> Transaction[%s]" % (transaction.transaction_id))
+
+		return transactions
