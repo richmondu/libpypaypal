@@ -107,7 +107,7 @@ class paypal_client:
 
 
 
-	def create_billing_plan(self, return_url, cancel_url, item_price, num_cycles):
+	def create_billing_plan(self, return_url, cancel_url, item_price, num_cycles, frequency):
 		plan = {
 			"description": "Basic Plan subscription",
 			"merchant_preferences": {
@@ -125,7 +125,7 @@ class paypal_client:
 						"value": str(item_price)
 					},
 					"cycles": str(num_cycles),
-					"frequency": "DAY",
+					"frequency": frequency,
 					"frequency_interval": "1",
 					"name": "REGULAR 1",
 					"type": "REGULAR"
@@ -162,7 +162,7 @@ class paypal_client:
 		agreement = {
 			"name": "Agreement for Basic Plan subscription",
 			"description": "Agreement for Basic Plan subscription",
-			"start_date": datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
+			"start_date": (datetime.now()+timedelta(hours=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
 			"plan": {
 				"id": billing_plan_id
 			},
