@@ -3,6 +3,8 @@ import webbrowser
 import argparse
 import sys
 import json
+import time
+from datetime import datetime, timedelta
 
 
 
@@ -18,13 +20,19 @@ def print_json(json_object, is_json=True, label=None):
 		print("{}\r\n{}".format(label, json_formatted_str))
 
 
-def test_billing_plan(paypal):
+def test_billing_plan(paypal, billing_plan_id=None):
 
 	############################################################################################################
 	# Create billing plan
 	############################################################################################################
 	print("Create billing plan")
-	billing_plan_id = paypal.create_billing_plan("http://localhost:8100/#/page_home", "http://localhost:8100/#/page_login", 20, 6)
+	if billing_plan_id is None:
+		cycles = 2
+		cost = 10 # 20 USD
+		return_url = "http://localhost:8100/#/page_home"
+		cancel_url = "http://localhost:8100/#/page_login"
+		frequency = "WEEK"
+		billing_plan_id = paypal.create_billing_plan(return_url, cancel_url, cost, cycles, frequency)
 	print(billing_plan_id)
 	print()
 
@@ -85,6 +93,7 @@ def test_billing_agreement(paypal, billing_plan_id):
 
 	print("Get billing agreement approval url")
 	approval_url = paypal.get_billing_agreement_link(billing_agreement)
+	time.sleep(3)
 	print(approval_url)
 	print()
 
@@ -97,13 +106,27 @@ def test_billing_agreement2(paypal, payment_token):
 	print("Execute billing agreement")
 	agreement = paypal.execute_billing_agreement(payment_token)
 	print(agreement)
-	print(agreement.id)
+	print()
+	print('billing_agreement.id:  {}'.format(agreement.id))
+	print('agreement_details')
+	print('  outstanding_balance: {}'.format(agreement.agreement_details.outstanding_balance))
+	print('  cycles_remaining:    {}'.format(agreement.agreement_details.cycles_remaining))
+	print('  cycles_completed:    {}'.format(agreement.agreement_details.cycles_completed))
+	print('  next_billing_date:   {}'.format(agreement.agreement_details.next_billing_date))
+	print('  final_payment_date:  {}'.format(agreement.agreement_details.final_payment_date))
 	print()
 
 	print("Get billing agreement details")
 	billing_agreement = paypal.get_billing_agreement_details(agreement.id)
 	print(billing_agreement)
-	print(billing_agreement.id)
+	print()
+	print('billing_agreement.id:  {}'.format(billing_agreement.id))
+	print('agreement_details')
+	print('  outstanding_balance: {}'.format(billing_agreement.agreement_details.outstanding_balance))
+	print('  cycles_remaining:    {}'.format(billing_agreement.agreement_details.cycles_remaining))
+	print('  cycles_completed:    {}'.format(billing_agreement.agreement_details.cycles_completed))
+	print('  next_billing_date:   {}'.format(billing_agreement.agreement_details.next_billing_date))
+	print('  final_payment_date:  {}'.format(billing_agreement.agreement_details.final_payment_date))
 	print()
 
 	return agreement.id
@@ -114,7 +137,14 @@ def test_billing_agreement3(paypal, billing_agreement_id):
 	print("Get billing agreement details")
 	billing_agreement = paypal.get_billing_agreement_details(billing_agreement_id)
 	print(billing_agreement)
-	print(billing_agreement.id)
+	print()
+	print('billing_agreement.id:  {}'.format(billing_agreement.id))
+	print('agreement_details')
+	print('  outstanding_balance: {}'.format(billing_agreement.agreement_details.outstanding_balance))
+	print('  cycles_remaining:    {}'.format(billing_agreement.agreement_details.cycles_remaining))
+	print('  cycles_completed:    {}'.format(billing_agreement.agreement_details.cycles_completed))
+	print('  next_billing_date:   {}'.format(billing_agreement.agreement_details.next_billing_date))
+	print('  final_payment_date:  {}'.format(billing_agreement.agreement_details.final_payment_date))
 	print()
 
 	return billing_agreement
@@ -127,7 +157,9 @@ def main(args):
 	paypal.initialize()
 
 	# Test billing plan
-	billing_plan_id = test_billing_plan(paypal)
+	if False:
+		billing_plan_id = None
+		billing_plan_id = test_billing_plan(paypal, billing_plan_id)
 
 	if False:
 		# Test billing arrangement
@@ -135,9 +167,8 @@ def main(args):
 	elif False:
 		# Test execute payment for billing arrangement
 		agreement_id = test_billing_agreement2(paypal, payment_token)
-	else:
+	elif False:
 		billing_agreement = test_billing_agreement3(paypal, agreement_id)
-
 
 
 if __name__ == '__main__':
