@@ -117,7 +117,7 @@ def test_billing_agreement2(paypal, payment_token):
 	print()
 
 	print("Get billing agreement details")
-	billing_agreement = paypal.get_billing_agreement_details(agreement.id)
+	billing_agreement = paypal.get_billing_agreement(agreement.id)
 	print(billing_agreement)
 	print()
 	print('billing_agreement.id:  {}'.format(billing_agreement.id))
@@ -135,7 +135,7 @@ def test_billing_agreement2(paypal, payment_token):
 def test_billing_agreement3(paypal, billing_agreement_id):
 
 	print("Get billing agreement details")
-	billing_agreement = paypal.get_billing_agreement_details(billing_agreement_id)
+	billing_agreement = paypal.get_billing_agreement(billing_agreement_id)
 	print(billing_agreement)
 	print()
 	print('billing_agreement.id:  {}'.format(billing_agreement.id))
@@ -165,10 +165,18 @@ def main(args):
 		# Test billing arrangement
 		test_billing_agreement(paypal, billing_plan_id)
 	elif False:
-		# Test execute payment for billing arrangement
 		agreement_id = test_billing_agreement2(paypal, payment_token)
-	elif False:
+	elif True:
 		billing_agreement = test_billing_agreement3(paypal, agreement_id)
+
+		transactions = paypal.search_transaction_billing_agreement(billing_agreement, "2020-05-06", "2020-05-08")
+		print(transactions)
+		print()
+
+	#if True:
+	#	now = datetime.now()
+	#	print(now.strftime('%Y-%m-%dT%H:%M:%SZ'))
+	#	print((now+timedelta(hours=1)).strftime('%Y-%m-%dT%H:%M:%SZ'))
 
 
 if __name__ == '__main__':
