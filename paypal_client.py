@@ -116,20 +116,71 @@ class paypal_client:
 				"initial_fail_amount_action": "continue",
 				"max_fail_attempts": "2",
 				"return_url": return_url,
+				# to be charged immediately
+				# replacement for TRIAL PERIOD
+				"setup_fee": {
+					"currency": "USD",
+					"value": "1.00"
+				}
 			},
 			"name": "Basic Plan subscription",
 			"payment_definitions": [
 				{
+					"type": "REGULAR",
+					"frequency": frequency,
+					"frequency_interval": "1",
+					"cycles": str(num_cycles),
 					"amount": {
 						"currency": "USD",
 						"value": str(item_price)
 					},
-					"cycles": str(num_cycles),
-					"frequency": frequency,
-					"frequency_interval": "1",
-					"name": "REGULAR 1",
-					"type": "REGULAR"
-				}
+					"name": "Succeeding Month Recurring Payments",
+
+					"charge_models": [
+					{
+						"type": "TAX",
+						"amount": {
+						  "currency": "USD",
+						  "value": "0.00"
+						}
+					},
+					{
+						"type": "SHIPPING",
+						"amount": {
+						  "currency": "USD",
+						  "value": "0.00"
+						}
+					}
+					],
+				},
+				#{
+				#	"type": "TRIAL",
+				#	"frequency": "Day",
+				#	"frequency_interval": "2",
+				#	"cycles": str(1),
+				#	"amount": {
+				#		"currency": "USD",
+				#		"value": str(1)
+				#	},
+				#	"name": "First Month Prorated Payment",
+
+				#	"charge_models": [
+				#	{
+				#		"type": "TAX",
+				#		"amount": {
+				#		  "currency": "USD",
+				#		  "value": "0.00"
+				#		}
+				#	},
+				#	{
+				#		"type": "SHIPPING",
+				#		"amount": {
+				#		  "currency": "USD",
+				#		  "value": "0.00"
+				#		}
+				#	}
+				#	],
+				#},
 			],
 			"type": "FIXED"
 		}
@@ -159,10 +210,12 @@ class paypal_client:
 
 
 	def create_billing_agreement(self, billing_plan_id):
+		delay = timedelta(days=2)
+		#delay = timedelta(hours=1)
 		agreement = {
 			"name": "Agreement for Basic Plan subscription",
 			"description": "Agreement for Basic Plan subscription",
-			"start_date": (datetime.now()+timedelta(hours=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+			"start_date": (datetime.now()+delay).strftime('%Y-%m-%dT%H:%M:%SZ'),
 			"plan": {
 				"id": billing_plan_id
 			},

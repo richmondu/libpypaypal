@@ -25,18 +25,7 @@ def parse_arguments(argv):
 	return parser.parse_args(argv)
 
 
-def main(args):
-
-	CONFIG_MODE       = int(args.USE_MODE)
-	CONFIG_RETURN_URL = args.USE_RETURN_URL
-	CONFIG_CANCEL_URL = args.USE_CANCEL_URL
-	CONFIG_PAYMENT_ID = args.USE_PAYMENT_ID
-	CONFIG_PAYER_ID   = args.USE_PAYER_ID
-
-	# Initialize Paypal library
-	paypal = paypal_client()
-	paypal.initialize()
-
+def process():
 	# Initialize payment then open link to paypal
 	if CONFIG_MODE == 1:
 		return_url = CONFIG_RETURN_URL
@@ -103,6 +92,21 @@ def main(args):
 		payment_history = paypal.get_payment_history()
 		print(len(payment_history.payments));
 		print(payment_history.payments);
+
+
+def main(args):
+
+	CONFIG_MODE       = int(args.USE_MODE)
+	CONFIG_RETURN_URL = args.USE_RETURN_URL
+	CONFIG_CANCEL_URL = args.USE_CANCEL_URL
+	CONFIG_PAYMENT_ID = args.USE_PAYMENT_ID
+	CONFIG_PAYER_ID   = args.USE_PAYER_ID
+
+	# Initialize Paypal library
+	paypal = paypal_client()
+	paypal.initialize()
+
+	process()
 
 
 if __name__ == '__main__':
